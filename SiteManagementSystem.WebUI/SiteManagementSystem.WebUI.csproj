@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SiteManagementSystem.Business\SiteManagementSystem.Business.csproj" />
     <ProjectReference Include="..\SiteManagementSystem.DataAccess\SiteManagementSystem.DataAccess.csproj" />
     <ProjectReference Include="..\SiteManagementSystem.Entities\SiteManagementSystem.Entities.csproj" />

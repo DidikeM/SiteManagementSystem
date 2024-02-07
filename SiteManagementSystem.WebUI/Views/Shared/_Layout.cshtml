@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Default - Mazer Admin Dashboard</title>
+    <title>@ViewData[ViewDatas.PageTitle.ToString()] - Site Management System</title>
 
 
 
@@ -13,6 +13,8 @@
 
     <link rel="stylesheet" href="~/assets/compiled/css/app.css">
     <link rel="stylesheet" href="~/assets/compiled/css/app-dark.css">
+
+    @await RenderSectionAsync(RenderSections.Styles.ToString(), required: false)
 </head>
 
 <body>
@@ -66,8 +68,6 @@
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Single menu Item</span>
                             </a>
-
-
                         </li>
 
                         <li class="sidebar-item  has-sub">
@@ -84,8 +84,6 @@
                                 </li>
 
                             </ul>
-
-
                         </li>
 
                         <li class="sidebar-item  has-sub">
@@ -135,6 +133,23 @@
 
                         </li>
 
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-stack"></i>
+                                <span>Site</span>
+                            </a>
+
+                            <ul class="submenu ">
+
+                                <li class="submenu-item  ">
+                                    <a asp-controller="Site" asp-action="Add" class="submenu-link">Site Ekle</a>
+
+                                </li>
+
+                            </ul>
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -174,7 +189,7 @@
             <footer>
                 <div class="footer clearfix mb-0 text-muted">
                     <div class="float-start">
-                        <p>2023 &copy; Mazer</p>
+                        <p>2024 &copy; Site Management System</p>
                     </div>
                     <div class="float-end">
                         <p>
@@ -189,11 +204,11 @@
     <script src="~/assets/static/js/components/dark.js"></script>
     <script src="~/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 
-
     <script src="~/assets/compiled/js/app.js"></script>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-
+    @await RenderSectionAsync(RenderSections.Scripts.ToString(), required: false)
 </body>
 
 </html>

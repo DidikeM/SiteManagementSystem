@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Concrete\" />
-    <Folder Include="Abstract\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SiteManagementSystem.DataAccess\SiteManagementSystem.DataAccess.csproj" />
     <ProjectReference Include="..\SiteManagementSystem.Entities\SiteManagementSystem.Entities.csproj" />
   </ItemGroup>

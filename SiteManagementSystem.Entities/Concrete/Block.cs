@@ -13,6 +13,6 @@ namespace SiteManagementSystem.Entities.Concrete
         public string BlockName { get; set; } = null!;
         public int SiteId { get; set; }
         public Site Site { get; set; } = null!;
-        public List<House> Houses { get; set; } = null!;
+        public List<Flat> Flats { get; set; } = null!;
     }
 }

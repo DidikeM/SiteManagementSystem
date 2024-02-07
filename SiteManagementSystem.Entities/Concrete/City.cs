@@ -10,7 +10,7 @@ namespace SiteManagementSystem.Entities.Concrete
     public class City : IEntity
     {
         public int Id { get; set; }
-        public string CityName { get; set; } = null!;
+        public string Name { get; set; } = null!;
         public List<District> Districts { get; set; } = null!;
     }
 }

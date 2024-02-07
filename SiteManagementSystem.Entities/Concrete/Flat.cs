@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace SiteManagementSystem.Entities.Concrete
 {
-    public class House : IEntity
+    public class Flat : IEntity
     {
         public int Id { get; set; }
-        public string HouseNumber { get; set; } = null!;
+        public int FlatNumber { get; set; }
         public int BlockId { get; set; }
         public Block Block { get; set; } = null!;
     }

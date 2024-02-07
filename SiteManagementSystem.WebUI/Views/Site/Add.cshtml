@@ -1,0 +1,96 @@
+﻿@{
+    ViewData[ViewDatas.PageTitle.ToString()] = "Site Ekle";
+    ViewData[ViewDatas.PageDescription.ToString()] = "Bu sayfadan yeni site ekleyebilirsiniz.";
+}
+@model SiteAddModel
+
+<div class="card col-lg-8 offset-lg-2">
+    @* <div class="card-header">
+    <h4 class="card-title">Default Layout</h4>
+    </div> *@
+    <div class="card-content">
+        <div class="card-body ">
+            <form asp-controller="Site" asp-action="Add" method="post" class="form form-horizontal">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Site Adı</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <input asp-for="AddSiteDto.SiteName" type="text" class="form-control"
+                                   placeholder="Site Adı">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Bulunduğu İl</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <select required class="form-select" id="selectCity">
+                                <option disabled selected>Lütfen il seçiniz</option>
+                                @foreach (var city in Model.Cities)
+                                {
+                                    <option value="@city.Id">@city.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Bulunduğu İlçe</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <select asp-for="AddSiteDto.DistrictId" class="form-select" id="selectDistrict">
+                                <option disabled selected>Lütfen önce il seçiniz</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Adres Detayı</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <textarea asp-for="AddSiteDto.AddressDetail" type="text" class="form-control" placeholder="Adres Detayı" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Isınma Türü</label>
+                        </div>
+                        <div class="col-md-8 form-group">
+                            <input asp-for="AddSiteDto.TypeOfHeating" type="text" class="form-control"
+                                   placeholder="Isınma Türü">
+                        </div>
+
+
+                        <div class="col-sm-12 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                            <button type="reset"
+                                    class="btn btn-light-secondary me-1 mb-1">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#selectCity").change(function () {
+                var cityId = $("#selectCity").val();
+                $.ajax({
+                    type: "Get",
+                    url: "/Site/GetDistricts",
+                    data: { cityId: cityId },
+                    success: function (data) {
+                        $("#selectDistrict").empty();
+                        $("#selectDistrict").append('<option disabled selected>Lütfen İlçe Seçiniz</option>');
+                        $.each(data, function (index, value) {
+                            $("#selectDistrict").append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
