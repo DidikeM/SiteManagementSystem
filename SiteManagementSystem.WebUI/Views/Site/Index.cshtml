@@ -39,10 +39,17 @@
                     { label: 'Bulunduğu İlçe', name: "districtId", hidden: true, editable: true, editrules: { edithidden: true }, edittype: "select" },
                     { label: 'Bulunduğu İlçe', name: 'districtName', width: 150 },
                     { label: 'Adres Detayı', name: 'addressDetail', width: 250, editable: true },
-                    { label: 'Isınma Türü', name: 'typeOfHeating', width: 150, editable: true }
+                    { label: 'Isınma Türü', name: 'typeOfHeating', width: 150, editable: true },
+                    {
+                        label: "Diğer",
+                        name: "id",
+                        formatter: function (cellValue, options, rowObject) {
+                            return "<a class='btn btn-primary' href='Flat/SiteDetail/" + cellValue + "'>Yönet</a>";
+                        }
+                    }
                 ],
                 viewrecords: true,
-                height: 250,
+                height: "100%",
                 rowNum: 5,
                 page: "page",
                 total: "total",

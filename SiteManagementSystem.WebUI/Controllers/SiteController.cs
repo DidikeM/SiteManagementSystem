@@ -33,9 +33,6 @@ namespace SiteManagementSystem.WebUI.Controllers
                 Rows = _mapper.Map<List<SiteDto>>(data.Rows)!
             };
             return Json(jqGridData);
-            var sites = _mapper.Map<List<SiteDto>>(_siteService.GetSitesWithAddress());
-            var total = Math.Ceiling(sites!.Count / (decimal)rows);
-            return Json(new { rows = sites!.Skip((page - 1) * rows).Take(rows), total, page, records = sites!.Count });
         }
 
         //public IActionResult Add()

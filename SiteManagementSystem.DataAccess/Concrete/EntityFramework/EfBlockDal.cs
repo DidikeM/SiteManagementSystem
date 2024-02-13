@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using SiteManagementSystem.DataAccess.Abstract;
 using SiteManagementSystem.Entities.Concrete;
 using System;
@@ -10,40 +11,34 @@ using System.Threading.Tasks;
 
 namespace SiteManagementSystem.DataAccess.Concrete.EntityFramework
 {
-    public class EfSiteDal : EfEntityRepositoryBase<Site, SiteManagementSystemContext>, ISiteDal
+    public class EfBlockDal : EfEntityRepositoryBase<Block, SiteManagementSystemContext>, IBlockDal
     {
         private readonly IDbContextFactory<SiteManagementSystemContext> _contextFactory;
-        public EfSiteDal(IDbContextFactory<SiteManagementSystemContext> contextFactory) : base(contextFactory)
+        public EfBlockDal(IDbContextFactory<SiteManagementSystemContext> contextFactory) : base(contextFactory)
         {
             _contextFactory = contextFactory;
         }
 
-        public List<Site> GetSitesWithAddress()
+        public JqGridData<Block> GetBlocksFromJqGrid(int page, int rows, Expression<Func<Block, bool>> filter = null!)
         {
             using var context = _contextFactory.CreateDbContext();
-            return context.Sites.Include(s => s.District).ThenInclude(d => d.City).ToList();
-        }
-
-        public JqGridData<Site> GetSitesWithAddressFromJqGrid(int page, int rows, Expression<Func<Site, bool>> filter = null!)
-        {
-            using var context = _contextFactory.CreateDbContext();
-            var sites = context.Sites.Include(s => s.District).ThenInclude(d => d.City).AsQueryable();
+            var blocks = context.Blocks.AsQueryable();
             if (filter != null)
             {
-                sites = sites.Where(filter);
+                blocks = blocks.Where(filter);
             }
 
             int skip = (page - 1) * rows;
             skip = skip < 0 ? 0 : skip;
-            
-            var count = sites.Count();
-            
-            return new JqGridData<Site>
+
+            var count = blocks.Count();
+
+            return new JqGridData<Block>
             {
                 Page = page,
                 Records = count,
                 Total = (int)Math.Ceiling(count / (decimal)rows),
-                Rows = sites.Skip(skip).Take(rows).ToList()
+                Rows = blocks.Skip(skip).Take(rows).ToList()
             };
         }
     }

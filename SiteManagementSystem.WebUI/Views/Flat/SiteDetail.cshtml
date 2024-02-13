@@ -1,0 +1,174 @@
+﻿@{
+    ViewData[ViewDatas.PageTitle.ToString()] = "Bloklar/Daireler";
+    ViewData[ViewDatas.PageDescription.ToString()] = "Bu sayfadan blokları/daireleri görüntüleyebilir, düzenleyebilir ve yeni blok/daire ekleyebilirsiniz.";
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/trirand/ui.jqgrid-bootstrap5.css" />
+}
+
+<div class="card">
+    <div class="card-content">
+        <div class="card-body ">
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/ecmascript" src="~/js/trirand/i18n/grid.locale-tr.js"></script>
+    <script type="text/ecmascript" src="~/js/trirand/jquery.jqGrid.min.js"></script>
+
+    <script>
+        $.jgrid.defaults.width = 1725;
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap5';
+        $.jgrid.defaults.iconSet = 'Bootstrap5';
+    </script>
+    <script>
+        var siteId = @ViewBag.SiteId;
+
+        $(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: "/Flat/GetBlocks/" + siteId,
+                datatype: "json",
+                mtype: "GET",
+                colModel: [
+                    { name: 'id', hidden: true, key: true },
+                    { label: 'Blok Adı', name: 'blockName', width: 150, editable: true }
+                ],
+                viewrecords: true,
+                height: "100%",
+                rowNum: 5,
+                page: "page",
+                total: "total",
+                records: "records",
+                pager: "#jqGridPager",
+                loadonce: true,
+                subGrid: true,
+                subGridRowExpanded: showChildGrid,
+            });
+
+            function showChildGrid(parentRowID, parentRowKey) {
+                var childGridID = parentRowID + "_table";
+                var childGridPagerID = parentRowID + "_pager";
+
+                var childGridURL = "/Flat/GetFlats/" + parentRowKey;
+
+                // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+                $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+                $("#" + childGridID).jqGrid({
+                    url: childGridURL,
+                    mtype: "GET",
+                    datatype: "json",
+                    colModel: [
+                        { name: 'id', hidden: true, key: true },
+                        { label: 'Daire Numarası', name: 'flatNumber', width: 750, editable: true }
+                    ],
+                    page: "page",
+                    viewrecords: true,
+                    total: "total",
+                    records: "records",
+                    loadonce: true,
+                    height: '100%',
+                    pager: "#" + childGridPagerID
+                });
+
+                $("#" + childGridID).navGrid('#' + childGridPagerID,
+                    // the buttons to appear on the toolbar of the grid
+                    { edit: true, add: true, del: true, search: false, refresh: false, view: false, position: "left", cloneToTop: false },
+                    // options for the Edit Dialog
+                    {
+                        url: '/Flat/UpdateFlat',
+                        editCaption: "The Edit Dialog",
+                        recreateForm: true,
+                        checkOnUpdate: true,
+                        checkOnSubmit: true,
+                        closeAfterEdit: true,
+                        editData: {
+                            blockId: function () {
+                                return parentRowKey;
+                            }
+                        },
+                        // afterShowForm: afterShowForm,
+                        errorTextFormat: function (data) {
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+                    // options for the Add Dialog
+                    {
+                        url: '/Flat/AddFlat',
+                        closeAfterAdd: true,
+                        recreateForm: true,
+                        editData: {
+                            blockId: function () {
+                                return parentRowKey;
+                            }
+                        },
+                        // afterShowForm: afterShowForm,
+                        errorTextFormat: function (data) {
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+                    // options for the Delete Dailog
+                    {
+                        url: '/Flat/DeleteFlat',
+                        errorTextFormat: function (data) {
+                            return 'Error: ' + data.responseText
+                        }
+                    }
+                );
+                window.dispatchEvent(new Event('resize'));
+            }
+
+            $('#jqGrid').navGrid('#jqGridPager',
+                // the buttons to appear on the toolbar of the grid
+                { edit: true, add: true, del: true, search: false, refresh: false, view: false, position: "left", cloneToTop: false },
+                // options for the Edit Dialog
+                {
+                    url: '/Flat/UpdateBlock',
+                    editCaption: "The Edit Dialog",
+                    recreateForm: true,
+                    checkOnUpdate: true,
+                    checkOnSubmit: true,
+                    closeAfterEdit: true,
+                    editData: {
+                        siteId: function () {
+                            return siteId;
+                        }
+                    },
+                    // afterShowForm: afterShowForm,
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                },
+                // options for the Add Dialog
+                {
+                    url: '/Flat/AddBlock',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    editData: {
+                        siteId: function () {
+                            return siteId;
+                        }
+                    },
+                    // afterShowForm: afterShowForm,
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                },
+                // options for the Delete Dailog
+                {
+                    url: '/Flat/DeleteBlock',
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                }
+            );
+            window.dispatchEvent(new Event('resize'));
+        });
+
+
+    </script>
+}

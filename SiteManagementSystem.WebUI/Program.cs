@@ -18,10 +18,13 @@ builder.Services.AddDbContextFactory<SiteManagementSystemContext>(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddSingleton<ISiteService, SiteService>();
+builder.Services.AddSingleton<IFlatService, FlatService>();
 
 builder.Services.AddSingleton<ICityDal, EfCityDal>();
 builder.Services.AddSingleton<IDistrictDal, EfDistrictDal>();
 builder.Services.AddSingleton<ISiteDal, EfSiteDal>();
+builder.Services.AddSingleton<IBlockDal, EfBlockDal>();
+builder.Services.AddSingleton<IFlatDal, EfFlatDal>();
 
 var app = builder.Build();
 
