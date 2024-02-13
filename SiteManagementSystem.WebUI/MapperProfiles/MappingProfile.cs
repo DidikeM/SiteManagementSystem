@@ -8,7 +8,15 @@ namespace SiteManagementSystem.WebUI.MapperProfiles
     {
         public MappingProfile()
         {
-            CreateMap<AddSiteDto, Site>().ReverseMap();
+            CreateMap<AddSiteDto, Site>();
+
+            CreateMap<Site, SiteDto>()
+                .ForMember(dest => dest.DistrictName, opt => opt.MapFrom(src => src.District.Name))
+                .ForMember(dest => dest.DistrictId, opt => opt.MapFrom(src => src.District.Id))
+                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.District.City.Name))
+                .ForMember(dest => dest.CityId, opt => opt.MapFrom(src => src.District.City.Id));
+
+            CreateMap<UpdateSiteDto, Site>();
         }
     }
 }

@@ -26,6 +26,11 @@ namespace SiteManagementSystem.Business.Concrete
             _siteDal.Add(site);
         }
 
+        public void DeleteSite(int id)
+        {
+            _siteDal.Delete(new Site { Id = id });
+        }
+
         public List<City> GetCities()
         {
             return _cityDal.GetAll();
@@ -34,6 +39,26 @@ namespace SiteManagementSystem.Business.Concrete
         public List<District> GetDistrictsByCityId(int cityId)
         {
             return _districtDal.GetAll(d => d.CityId == cityId);
+        }
+
+        public List<Site> GetSites()
+        {
+            return _siteDal.GetAll();
+        }
+
+        public List<Site> GetSitesWithAddress()
+        {
+            return _siteDal.GetSitesWithAddress();
+        }
+
+        public JqGridData<Site> GetSitesWithAddressFromJqGrid(int page, int rows)
+        {
+            return _siteDal.GetSitesWithAddressFromJqGrid(page, rows);
+        }
+
+        public void UpdateSite(Site site)
+        {
+            _siteDal.Update(site);
         }
     }
 }

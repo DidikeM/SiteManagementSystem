@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-16">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData[ViewDatas.PageTitle.ToString()] - Site Management System</title>
 
@@ -133,21 +133,11 @@
 
                         </li>
 
-
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="bi bi-stack"></i>
-                                <span>Site</span>
+                        <li class="sidebar-item">
+                            <a asp-controller="Site" asp-action="Index" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Siteler</span>
                             </a>
-
-                            <ul class="submenu ">
-
-                                <li class="submenu-item  ">
-                                    <a asp-controller="Site" asp-action="Add" class="submenu-link">Site Ekle</a>
-
-                                </li>
-
-                            </ul>
                         </li>
 
                     </ul>

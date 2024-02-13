@@ -1,0 +1,232 @@
+﻿@{
+    ViewData[ViewDatas.PageTitle.ToString()] = "Siteler";
+    ViewData[ViewDatas.PageDescription.ToString()] = "Bu sayfadan siteleri görüntüleyebilir, düzenleyebilir ve yeni site ekleyebilirsiniz.";
+}
+@section Styles {
+    <link rel="stylesheet" type="text/css" media="screen" href="~/css/trirand/ui.jqgrid-bootstrap5.css" />
+}
+
+<div class="card">
+    <div class="card-content">
+        <div class="card-body ">
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/ecmascript" src="~/js/trirand/i18n/grid.locale-tr.js"></script>
+    <script type="text/ecmascript" src="~/js/trirand/jquery.jqGrid.min.js"></script>
+
+    <script>
+        $.jgrid.defaults.width = 1725;
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap5';
+        $.jgrid.defaults.iconSet = 'Bootstrap5';
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: '/Site/GetSites',
+                datatype: "json",
+                colModel: [
+                    { label: 'Id', name: 'id', key: true, width: 50, editable: false },
+                    { label: 'Site Adı', name: 'siteName', width: 150, editable: true },
+                    { label: 'Bulunduğu İl', name: "cityId", hidden: true, editable: true, editrules: { edithidden: true }, edittype: "select" },
+                    { label: 'Bulunduğu İl', name: 'cityName', width: 150 },
+                    { label: 'Bulunduğu İlçe', name: "districtId", hidden: true, editable: true, editrules: { edithidden: true }, edittype: "select" },
+                    { label: 'Bulunduğu İlçe', name: 'districtName', width: 150 },
+                    { label: 'Adres Detayı', name: 'addressDetail', width: 250, editable: true },
+                    { label: 'Isınma Türü', name: 'typeOfHeating', width: 150, editable: true }
+                ],
+                viewrecords: true,
+                height: 250,
+                rowNum: 5,
+                page: "page",
+                total: "total",
+                records: "records",
+                pager: "#jqGridPager"
+            });
+
+            $('#jqGrid').navGrid('#jqGridPager',
+                // the buttons to appear on the toolbar of the grid
+                { edit: true, add: true, del: true, search: false, refresh: false, view: false, position: "left", cloneToTop: false },
+                // options for the Edit Dialog
+                {
+                    url: '/Site/Update',
+                    editCaption: "The Edit Dialog",
+                    recreateForm: true,
+                    checkOnUpdate: true,
+                    checkOnSubmit: true,
+                    closeAfterEdit: true,
+                    afterShowForm: loadCityAndDistrictSelectsFromUpdate,
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                },
+                // options for the Add Dialog
+                {
+                    url: '/Site/Add',
+                    closeAfterAdd: true,
+                    recreateForm: true,
+                    afterShowForm: loadCityAndDistrictSelectsFromAdd,
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                },
+                // options for the Delete Dailog
+                {
+                    url: '/Site/Delete',
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.responseText
+                    }
+                }
+            );
+
+            function loadCityAndDistrictSelectsFromAdd() {
+                var citySelect = $('#cityId');
+                var districtSelect = $('#districtId');
+                citySelect.empty();
+                districtSelect.empty();
+                $.ajax({
+                    url: '/Site/GetCities',
+                    type: 'GET',
+                    success: function (data) {
+                        citySelect.append($('<option>', {
+                            value: "",
+                            text: "Lütfen il seçiniz",
+                            selected: true,
+                            disabled: true
+                        }));
+                        $.each(data, function (index, city) {
+                            citySelect.append($('<option>', {
+                                value: city.id,
+                                text: city.name
+                            }));
+                        });
+                        districtSelect.append($('<option>', {
+                            value: "",
+                            text: "Lütfen önce il seçiniz",
+                            selected: true,
+                            disabled: true
+                        }));
+                    }
+                });
+
+                citySelect.on('change', function () {
+                    var selectedCityId = $(this).val();
+                    districtSelect.empty();
+                    $.ajax({
+                        url: '/Site/GetDistricts',
+                        type: 'GET',
+                        data: { cityId: selectedCityId },
+                        success: function (data) {
+                            districtSelect.append($('<option>', {
+                                value: "",
+                                text: "Lütfen İlçe Seçiniz",
+                                selected: true,
+                                disabled: true
+                            }));
+                            $.each(data, function (index, district) {
+                                districtSelect.append($('<option>', {
+                                    value: district.id,
+                                    text: district.name
+                                }));
+                            });
+                        }
+                    });
+                });
+                districtSelect.on('change', function () {
+                    var rowdata = $("#jqGrid").jqGrid('getRowData', $("#jqGrid")[0].p.selrow);
+                    rowdata.districtId = $(this).val();
+                    $("#jqGrid").jqGrid('setRowData', $("#jqGrid")[0].p.selrow, rowdata);
+                });
+            }
+
+            function loadCityAndDistrictSelectsFromUpdate() {
+                var citySelect = $('#cityId');
+                var cityId = $("#jqGrid").jqGrid('getRowData', $("#jqGrid")[0].p.selrow).cityId;
+                var districtSelect = $('#districtId');
+                citySelect.empty();
+                districtSelect.empty();
+                $.ajax({
+                    url: '/Site/GetCities',
+                    type: 'GET',
+                    success: function (data) {
+                        $.each(data, function (index, city) {
+                            if (city.id === parseInt(cityId)) {
+                                citySelect.append($('<option>', {
+                                    value: city.id,
+                                    text: city.name,
+                                    selected: true
+                                }));
+                            } else {
+                                citySelect.append($('<option>', {
+                                    value: city.id,
+                                    text: city.name
+                                }));
+                            }
+                        });
+                    }
+                });
+                var districtId = $("#jqGrid").jqGrid('getRowData', $("#jqGrid")[0].p.selrow).districtId;
+                $.ajax({
+                    url: '/Site/GetDistricts',
+                    type: 'GET',
+                    data: { cityId: cityId },
+                    success: function (data) {
+                        $.each(data, function (index, district) {
+                            if (district.id === parseInt(districtId)) {
+                                districtSelect.append($('<option>', {
+                                    value: district.id,
+                                    text: district.name,
+                                    selected: true
+                                }));
+                            } else {
+                                districtSelect.append($('<option>', {
+                                    value: district.id,
+                                    text: district.name
+                                }));
+                            }
+                        });
+                    }
+                });
+                citySelect.on('change', function () {
+                    var selectedCityId = $(this).val();
+                    var rowdata = $("#jqGrid").jqGrid('getRowData', $("#jqGrid")[0].p.selrow);
+                    rowdata.cityId = selectedCityId;
+                    $("#jqGrid").jqGrid('setRowData', $("#jqGrid")[0].p.selrow, rowdata);
+                    districtSelect.empty();
+                    $.ajax({
+                        url: '/Site/GetDistricts',
+                        type: 'GET',
+                        data: { cityId: selectedCityId },
+                        success: function (data) {
+                            districtSelect.append($('<option>', {
+                                value: "",
+                                text: "Lütfen İlçe Seçiniz",
+                                selected: true,
+                                disabled: true
+                            }));
+                            $.each(data, function (index, district) {
+                                districtSelect.append($('<option>', {
+                                    value: district.id,
+                                    text: district.name
+                                }));
+                            });
+                        }
+                    });
+                });
+                districtSelect.on('change', function () {
+                    var rowdata = $("#jqGrid").jqGrid('getRowData', $("#jqGrid")[0].p.selrow);
+                    rowdata.districtId = $(this).val();
+                    $("#jqGrid").jqGrid('setRowData', $("#jqGrid")[0].p.selrow, rowdata);
+                });
+            }
+        });
+
+
+    </script>
+}

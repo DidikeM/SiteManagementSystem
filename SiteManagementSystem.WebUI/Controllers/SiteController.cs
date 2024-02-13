@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SiteManagementSystem.Business.Abstract;
 using SiteManagementSystem.Entities.Concrete;
+using SiteManagementSystem.WebUI.DTOs;
 using SiteManagementSystem.WebUI.Models;
 
 namespace SiteManagementSystem.WebUI.Controllers
@@ -16,27 +17,66 @@ namespace SiteManagementSystem.WebUI.Controllers
             _siteService = siteService;
         }
 
-        public IActionResult Add()
+        public IActionResult Index()
         {
-            var model = new SiteAddModel
-            {
-                Cities = _siteService.GetCities()
-            };
-            return View(model);
+            return View();
         }
 
-        [HttpPost]
-        public IActionResult Add(SiteAddModel model)
+        public IActionResult GetSites(int page, int rows)
         {
-            var site = _mapper.Map<Site>(model.AddSiteDto);
+            var data = _siteService.GetSitesWithAddressFromJqGrid(page, rows);
+            var jqGridData = new JqGridData<SiteDto>
+            {
+                Page = data.Page,
+                Records = data.Records,
+                Total = data.Total,
+                Rows = _mapper.Map<List<SiteDto>>(data.Rows)!
+            };
+            return Json(jqGridData);
+            var sites = _mapper.Map<List<SiteDto>>(_siteService.GetSitesWithAddress());
+            var total = Math.Ceiling(sites!.Count / (decimal)rows);
+            return Json(new { rows = sites!.Skip((page - 1) * rows).Take(rows), total, page, records = sites!.Count });
+        }
+
+        //public IActionResult Add()
+        //{
+        //    var model = new SiteAddModel
+        //    {
+        //        Cities = _siteService.GetCities()
+        //    };
+        //    return View(model);
+        //}
+
+        [HttpPost]
+        public IActionResult Add(AddSiteDto addSiteDto)
+        {
+            var site = _mapper.Map<Site>(addSiteDto);
             _siteService.AddSite(site!);
 
-            return RedirectToAction("Add", "Site");
+            return Ok();
+        }
+
+        public IActionResult Update(UpdateSiteDto updateSiteDto)
+        {
+            var site = _mapper.Map<Site>(updateSiteDto);
+            _siteService.UpdateSite(site!);
+            return Ok();
+        }
+
+        public IActionResult Delete(int id)
+        {
+            _siteService.DeleteSite(id);
+            return Ok();
         }
 
         public List<District> GetDistricts(int cityId)
         {
             return _siteService.GetDistrictsByCityId(cityId);
+        }
+
+        public List<City> GetCities()
+        {
+            return _siteService.GetCities();
         }
     }
 }
