@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace SiteManagementSystem.DataAccess.Migrations
 {
     /// <inheritdoc />
@@ -90,7 +94,10 @@ namespace SiteManagementSystem.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FlatNumber = table.Column<int>(type: "int", nullable: false),
-                    BlockId = table.Column<int>(type: "int", nullable: false)
+                    BlockId = table.Column<int>(type: "int", nullable: false),
+                    Floor = table.Column<int>(type: "int", nullable: false),
+                    Area = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

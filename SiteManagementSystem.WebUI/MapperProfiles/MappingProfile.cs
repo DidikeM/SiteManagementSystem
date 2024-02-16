@@ -25,6 +25,8 @@ namespace SiteManagementSystem.WebUI.MapperProfiles
             CreateMap<Flat, FlatDto>();
             CreateMap<AddFlatDto, Flat>();
             CreateMap<UpdateFlatDto, Flat>();
+
+            CreateMap<UserRegisterDto, User>();
         }
     }
 }

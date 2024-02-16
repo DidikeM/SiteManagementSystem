@@ -14,7 +14,9 @@ namespace SiteManagementSystem.Entities.Concrete
         public string AddressDetail { get; set; } = null!;
         public int DistrictId { get; set; }
         public string TypeOfHeating { get; set; } = null!;
+        public int? SiteManagerId { get; set; }
         public District District { get; set; } = null!;
         public List<Block> Blocks { get; set; } = null!;
+        public User? SiteManager { get; set; }
     }
 }

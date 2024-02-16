@@ -33,6 +33,10 @@ namespace SiteManagementSystem.DataAccess.Concrete.EntityFramework
                 new District { Id = 11, Name = "Meram", CityId = 4 },
                 new District { Id = 12, Name = "Karatay", CityId = 4 }
                 );
+
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Name = "Admin", Surname = "Admin", Username = "admin", Password = "admin", IsAdmin = true}
+                );
         }
     }
 }

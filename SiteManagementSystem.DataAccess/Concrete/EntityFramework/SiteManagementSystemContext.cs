@@ -24,15 +24,18 @@ namespace SiteManagementSystem.DataAccess.Concrete.EntityFramework
         public DbSet<District> Districts { get; set; }
         public DbSet<Flat> Flats { get; set; }
         public DbSet<Site> Sites { get; set; }
+        public DbSet<Person> People { get; set; }
+        public DbSet<PersonNote> PersonNotes { get; set; }
+        public DbSet<User> Users { get; set; }
         override protected void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Block>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                entity.HasOne(d => d.Site)
+                entity.HasOne(b => b.Site)
                     .WithMany(p => p.Blocks)
-                    .HasForeignKey(d => d.SiteId);
+                    .HasForeignKey(b => b.SiteId);
             });
 
             modelBuilder.Entity<City>(entity =>
@@ -53,18 +56,50 @@ namespace SiteManagementSystem.DataAccess.Concrete.EntityFramework
             {
                 entity.HasKey(e => e.Id);
 
-                entity.HasOne(d => d.Block)
+                entity.HasOne(f => f.Block)
                     .WithMany(p => p.Flats)
-                    .HasForeignKey(d => d.BlockId);
+                    .HasForeignKey(f => f.BlockId);
+
+                entity.HasOne(f => f.FlatOwner)
+                    .WithMany(p => p.OwnedFlats)
+                    .HasForeignKey(f => f.FlatOwnerId);
+
+                entity.HasOne(f => f.Tenant)
+                    .WithOne(p => p.TenantsFlat)
+                    .HasForeignKey<Flat>(f => f.TenantId);
+
             });
 
             modelBuilder.Entity<Site>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                entity.HasOne(d => d.District)
+                entity.HasOne(s => s.District)
                     .WithMany(p => p.Sites)
-                    .HasForeignKey(d => d.DistrictId);
+                    .HasForeignKey(s => s.DistrictId);
+            });
+
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+            });
+
+            modelBuilder.Entity<PersonNote>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(pn => pn.Person)
+                    .WithMany(p => p.PersonNotes)
+                    .HasForeignKey(pn => pn.PersonId);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(u => u.Site)
+                    .WithOne(p => p.SiteManager)
+                    .HasForeignKey<Site>(u => u.SiteManagerId);
             });
 
             DataSeeder.SeedData(modelBuilder);
